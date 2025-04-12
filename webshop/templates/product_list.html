@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Flight Catalog{% endblock %}
+
+{% block content %}
+<h1>Flight Catalog</h1>
+<p>All available flights will be displayed here.</p>
+<ul>
+    {% for product in products %}
+        <li>
+            <h2>{{ product.name }}</h2>
+            <p>Price: {{ product.price }}</p>
+            <p>Departure Date: {{ product.departure_date }}</p>
+            <p>Departure Location: {{ product.departure_location }}</p>
+            <p>Destination: {{ product.destination }}</p>
+            <a href="{% url 'product_detail' product.id %}">Buy tickets</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

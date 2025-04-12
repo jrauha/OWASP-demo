@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Product Detail{% endblock %}
+
+{% block content %}
+<h1>Product Details</h1>
+<h2>{{ product.name }}</h2>
+<p>Price: {{ product.price }}</p>
+<p>Departure Date: {{ product.departure_date }}</p>
+<p>Departure Location: {{ product.departure_location }}</p>
+<p>Destination: {{ product.destination }}</p>
+<p>Stock: {{ product.stock }}</p>
+
+<form method="POST" action="{% url 'checkout' %}">
+    {% csrf_token %}
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" min="1" value="1">
+    <button type="submit">Buy tickets</button>
+</form>
+{% endblock %}

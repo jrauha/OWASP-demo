@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<h1>Checkout</h1>
+
+<h2>Flight Details</h2>
+<ul>
+    {% for item in cart_items %}
+        <li>
+            <h3>{{ item.product.name }}</h3>
+            <p>Price: {{ item.product.price }}</p>
+            <p>Departure Date: {{ item.product.departure_date }}</p>
+            <p>Departure Location: {{ item.product.departure_location }}</p>
+            <p>Destination: {{ item.product.destination }}</p>
+            <p>Quantity: {{ item.quantity }}</p>
+        </li>
+    {% endfor %}
+</ul>
+
+<h2>Total Price: {{ total_price }}</h2>
+<form method="POST" action="{% url 'process_checkout' %}">
+    {% csrf_token %}
+    <button type="submit">Confirm Purchase</button>
+</form>
+{% endblock %}
