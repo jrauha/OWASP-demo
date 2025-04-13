@@ -130,6 +130,19 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# OWASP A05:2021 - Security Misconfiguration
+# https://owasp.org/Top10/A05_2021-Security_Misconfiguration/
+# Server is misconfigured to serve static files from the project root directory
+# which exposes sensitive files.
+# Fix:
+# Serve static files from a separate directory outside the project root.
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",
+# ]
+STATICFILES_DIRS = [
+    BASE_DIR,
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
