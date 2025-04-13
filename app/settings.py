@@ -102,6 +102,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# OWASP A02:2021 - Cryptographic Failures
+# https://owasp.org/Top10/A02_2021-Cryptographic_Failures/
+# Custom password hasher that uses plain text passwords
+# Fix:
+# Use a secure password hashing algorithm like PBKDF2, Argon2, bcrypt, or scrypt.
+# PASSWORD_HASHERS = [
+#     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+# ]
+PASSWORD_HASHERS = ["app.hasher.PlainTextPasswordHasher"]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
