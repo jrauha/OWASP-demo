@@ -70,7 +70,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "app.wsgi.application"
 
 LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "/profile/"
+LOGIN_REDIRECT_URL = "/"
 
 
 # Database

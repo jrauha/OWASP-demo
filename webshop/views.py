@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from .models import Product, Order
 from django.db import transaction
+from django.contrib.auth.models import User
 
 
 def product_list(request):
@@ -73,13 +74,18 @@ def process_checkout(request):
 
             del request.session["cart_product_id"]
             del request.session["cart_product_quantity"]
-        return redirect("profile")
+        return redirect("profile", user_id=request.user.id)
     else:
         return redirect("product_list")
 
 
 @login_required
-def profile(request):
-    user = request.user
+def profile(request, user_id=None):
+    # OWASP A01:2021 - Broken Access Control
+    # User ID should be obtained from the request.user object
+    # to prevent unauthorized access to other users' profiles.
+    # Fix:
+    # user_id = request.user.id
+    user = User.objects.get(id=user_id)
     orders = Order.objects.filter(user=user)
-    return render(request, "profile.html", {"user": user, "orders": orders})
+    return render(request, "profile.html", {"profile": user, "orders": orders})
