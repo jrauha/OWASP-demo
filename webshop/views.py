@@ -55,6 +55,13 @@ def process_checkout(request):
         with transaction.atomic():
             product_id = request.session.get("cart_product_id")
             quantity = request.session.get("cart_product_quantity", 1)
+            # Demo: OWASP A04:2021 – Insecure Design
+            # The total price is read from the request instead of being calculated
+            # based on the product price and quantity. This allows users to manipulate
+            # the total price during checkout.
+            # Fix:
+            # total_price = product.price * quantity
+            total_price = float(request.POST.get("total_price", 0))
             customer_request = request.POST.get("customer_request", "")
             product = Product.objects.get(id=product_id)
 
@@ -71,6 +78,7 @@ def process_checkout(request):
                 product=product,
                 quantity=int(quantity),
                 customer_request=customer_request,
+                total_price=total_price,
             )
             order.save()
 

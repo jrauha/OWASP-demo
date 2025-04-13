@@ -22,7 +22,4 @@ class Order(models.Model):
     quantity = models.PositiveIntegerField()
     order_date = models.DateTimeField(auto_now_add=True)
     customer_request = models.TextField(null=True, blank=True)
-
-    @property
-    def total_price(self):
-        return self.product.price * self.quantity
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)

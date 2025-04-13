@@ -22,6 +22,7 @@
 <h2>Total Price: {{ total_price }}</h2>
 <form method="POST" action="{% url 'process_checkout' %}">
     {% csrf_token %}
+    <input type="hidden" name="total_price" value="{{ total_price }}">
     <textarea name="customer_request" rows="4" cols="50" placeholder="Enter any special requests or notes here..."></textarea><br>
     <button type="submit">Confirm Purchase</button>
 </form>
