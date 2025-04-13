@@ -1,9 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from .models import Product, Order
+from .models import Product, Order, PasswordReset
 from django.db import transaction
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 def product_list(request):
@@ -99,3 +101,72 @@ def profile(request, user_id=None):
     user = User.objects.get(id=user_id)
     orders = Order.objects.filter(user=user)
     return render(request, "profile.html", {"profile": user, "orders": orders})
+
+
+# Password reset views
+# Simple password reset functionality to demonstrate common
+# vulnerabilities and their fixes.
+
+
+def password_reset(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        user = User.objects.filter(email=email).first()
+        if user:
+            token = PasswordReset(user=user)
+            token.save()
+            reset_link = request.build_absolute_uri(
+                f"/reset/{token.user.id}/{token.token}/"
+            )
+            send_mail(
+                subject="Password Reset Request",
+                message=f"Click the link to reset your password: {reset_link}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+            )
+            return redirect("password_reset_done")
+        else:
+            # Demo: A05:2021 - Security Misconfiguration
+            # Application leaks information about whether the email exists
+            # in the system. This can be exploited by attackers to enumerate
+            # valid email addresses.
+            # Fix:
+            # Do not disclose whether the email exists or not.
+            return HttpResponse("Email not found", status=404)
+
+    return render(request, "password_reset.html")
+
+
+def password_reset_done(request):
+    return render(request, "password_reset_done.html")
+
+
+def password_reset_confirm(request, uid, token):
+    if request.method == "POST":
+        new_password = request.POST.get("new_password")
+        with transaction.atomic():
+            reset = PasswordReset.objects.filter(user_id=uid, token=token).first()
+
+            if reset:
+                # Demo: OWASP A07:2021 – Identification and Authentication Failures
+                # The token is not validated for expiration.
+                # Fix:
+                # Implement token expiration logic here
+                # Example: Check if the token is older than a certain threshold
+                # if timezone.now() - reset.created_at > timedelta(hours=1):
+                #     return HttpResponse("Token expired", status=400)
+
+                user = reset.user
+                # Demo: A07:2021 - Identification and Authentication Failures
+                # The password is not validated for strength or complexity.
+                # Fix:
+                # Implement password validation logic here
+                user.set_password(new_password)
+                user.save()
+                reset.delete()
+                return redirect("password_reset_complete")
+    return render(request, "password_reset_confirm.html", {"uid": uid, "token": token})
+
+
+def password_reset_complete(request):
+    return render(request, "password_reset_complete.html")
