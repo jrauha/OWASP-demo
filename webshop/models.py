@@ -21,6 +21,7 @@ class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     order_date = models.DateTimeField(auto_now_add=True)
+    customer_request = models.TextField(null=True, blank=True)
 
     @property
     def total_price(self):

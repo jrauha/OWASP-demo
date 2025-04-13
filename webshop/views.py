@@ -55,6 +55,7 @@ def process_checkout(request):
         with transaction.atomic():
             product_id = request.session.get("cart_product_id")
             quantity = request.session.get("cart_product_quantity", 1)
+            customer_request = request.POST.get("customer_request", "")
             product = Product.objects.get(id=product_id)
 
             if not product:
@@ -69,6 +70,7 @@ def process_checkout(request):
                 user=request.user,
                 product=product,
                 quantity=int(quantity),
+                customer_request=customer_request,
             )
             order.save()
 

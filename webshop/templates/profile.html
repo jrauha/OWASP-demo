@@ -21,6 +21,13 @@
                 <p>Date: {{ order.order_date }}</p>
                 <p>Product: {{ order.product.name }}</p>
                 <p>Quantity: {{ order.quantity }}</p>
+                <!-- Demo: A03:2021 – Injection
+                User input is not sanitized before being displayed
+                This could lead to XSS attacks if the customer_request contains malicious scripts.
+                Fix:
+                <p>Customer Request: {{ order.customer_request }}</p>
+                -->
+                <p>Customer Request: {{ order.customer_request | safe }}</p>
             </li>
         {% endfor %}
     </ul>
